@@ -1,49 +1,55 @@
 # Jenkins_Installation
 
-Installation Steps
+**Installation Steps**
 
-Installed Docker on Host:
+**Installed Docker on Host:**
 
 Ensured Docker was installed and running on the host (Ubuntu-based system):
 
-docker ps
+_docker ps
 sudo systemctl start docker
-sudo systemctl enable docker
+sudo systemctl enable docker_
 
 
-Ran Jenkins in Docker Container:
+
+**Ran Jenkins in Docker Container:**
+
+
 Pulled and started jenkins/jenkins:lts with persistent storage and Docker socket mapping:
 
-docker run -d --name jenkins \
+_docker run -d --name jenkins \
   -v /home/nikola/jenkins_home:/var/jenkins_home \
   -v /var/run/docker.sock:/var/run/docker.sock \
   -p 8080:8080 -p 5000:5000 \
-  jenkins/jenkins:lts
+  jenkins/jenkins:lts_
 
 
 Accessed Jenkins UI at http://localhost:8080 and completed setup (admin user, plugins).
 
 
 
-Installed Required Plugins:
+**Installed Required Plugins:**
 
 
 Added Docker Pipeline and Maven Integration plugins via Manage Jenkins -> Manage Plugins.
 
-Troubleshooting Docker Issues
 
-**Issue: docker: not found:**
+
+**Troubleshooting Docker Issues**
+
+**1.** Issue: docker: not found:
+
 
 Jenkins container lacked Docker CLI, causing pipeline failure.
 
 Installed Docker CLI inside the container:
 
-docker exec -it jenkins bash
+_docker exec -u 0 -it jenkins bash
 apt-get update
 apt-get install -y docker.io
-docker --version
+docker --version_
 
-Issue: permission denied on Docker Socket:
+**2.** Issue: permission denied on Docker Socket:
 
 Pipeline failed with:
 
@@ -51,15 +57,15 @@ permission denied while trying to connect to the Docker daemon socket at unix://
 
 Verified socket ownership on host:
 
-ls -l /var/run/docker.sock
+_ls -l /var/run/docker.sock_
 
 Output: srw-rw---- 1 root docker ...
 
 
 Added jenkins user to docker group inside container:
 
-usermod -aG docker jenkins
-id jenkins
+_usermod -aG docker jenkins
+id jenkins_
 
 
 
@@ -69,7 +75,7 @@ Tested docker ps as jenkins user, which initially failed.
 
 Temporarily changed socket permissions (insecure, for testing):
 
-chmod 666 /var/run/docker.sock
+_chmod 666 /var/run/docker.sock_
 
 Verified: srw-rw-rw- 1 root docker ...
 
