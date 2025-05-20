@@ -82,3 +82,14 @@ Verified: srw-rw-rw- 1 root docker ...
 
 
 Retested jenkins container, then the command docker ps succeeded as a jenkins user. 
+
+
+Permatenet solution for permission issue: 
+Create custom script: 
+_vi /etc/profile.d/docker_sock_fix.sh_
+
+_#!/bin/bash
+sudo chmod 666 /var/run/docker.sock_
+
+This will set all the neccessary permissions upon booting for docker.sock directory. 
+Sudo access must be enabled. 
